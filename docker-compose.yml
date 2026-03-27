@@ -1,0 +1,27 @@
+services:
+  server:
+    build:
+      context: .
+      args:
+        VELOCIRAPTOR_VERSION: "0.76.1"
+    container_name: containerraptor
+    platform: linux/amd64
+    ports:
+      - "8889:8889"
+      - "8000:8000"
+    volumes:
+      - velociraptor-config:/velociraptor/config
+      - velociraptor-data:/velociraptor/data
+      - velociraptor-logs:/velociraptor/logs
+    restart: unless-stopped
+    networks:
+      - raptor-net
+
+volumes:
+  velociraptor-config:
+  velociraptor-data:
+  velociraptor-logs:
+
+networks:
+  raptor-net:
+    driver: bridge
