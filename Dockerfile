@@ -21,6 +21,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
 # Hardened Debian base with near-zero CVEs
 FROM dhi.io/debian-base:bookworm
 
+LABEL org.opencontainers.image.source=https://github.com/Your-Saviour/ContainerRaptor
+LABEL org.opencontainers.image.description="Containerised Velociraptor server on Docker Hardened Images"
+LABEL org.opencontainers.image.licenses=GPL-3.0
+
 USER 0
 
 # Install minimal runtime dependencies
