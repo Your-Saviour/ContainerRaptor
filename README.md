@@ -51,6 +51,19 @@ Default credentials: `admin` / `admin` — **change the password after first log
 | `velociraptor-data` | `/velociraptor/data` | Datastore (clients, artifacts) |
 | `velociraptor-logs` | `/velociraptor/logs` | Application logs |
 
+## Generating Client Packages
+
+Client installers with your server's configuration embedded can be generated directly from the GUI using [server artifacts](https://docs.velociraptor.app/docs/deployment/clients/):
+
+1. Navigate to **Server Artifacts** in the sidebar
+2. Search for the artifact matching your target platform:
+   - **`Server.Utils.CreateMSI`** — Windows MSI installer
+   - **`Server.Utils.CreateLinuxPackages`** — Linux DEB/RPM packages
+3. Click **Launch**
+4. Download the completed installers from the **Uploaded Files** tab
+
+The server automatically downloads the correct Velociraptor binaries from GitHub and repacks them with your organisation's client configuration and TLS certificates.
+
 ## Configuration
 
 To customise the server config, edit `server.config.yaml` in the `velociraptor-config` volume and restart the container.
