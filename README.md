@@ -13,7 +13,7 @@ Containerised [Velociraptor](https://docs.velociraptor.app/) server built on [Do
 
 ```bash
 docker login dhi.io
-docker compose up --build -d
+VR_SERVER_DNS=vr.example.com docker compose up --build -d
 ```
 
 ### Pull from registry
@@ -22,6 +22,7 @@ docker compose up --build -d
 docker pull <registry>/containerraptor:latest
 docker run -d \
   --name containerraptor \
+  -e VR_SERVER_DNS=vr.example.com \
   -p 8889:8889 \
   -p 8000:8000 \
   -v velociraptor-config:/velociraptor/config \
@@ -31,6 +32,8 @@ docker run -d \
 ```
 
 On first run the container will automatically generate a new server configuration with unique TLS certificates, create an admin user, and start the server.
+
+> **Note:** `VR_SERVER_DNS` is required on first run. Velociraptor clients need a DNS name to locate the server — the generated config embeds this into `Client.server_urls` so that client packages connect to `https://<VR_SERVER_DNS>:8000/`. On subsequent runs the existing config is reused and the variable is not needed.
 
 Access the GUI at **https://localhost:8889** (self-signed certificate).
 
@@ -66,9 +69,15 @@ The server automatically downloads the correct Velociraptor binaries from GitHub
 
 ## Configuration
 
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VR_SERVER_DNS` | Yes (first run) | DNS name clients use to reach the server (e.g. `vr.example.com`) |
+
 To customise the server config, edit `server.config.yaml` in the `velociraptor-config` volume and restart the container.
 
-## Building a Specific Version
+### Build Args
 
 | Build Arg | Default | Description |
 |-----------|---------|-------------|
@@ -81,11 +90,11 @@ docker compose build --build-arg VELOCIRAPTOR_VERSION=0.76.1 --build-arg VELOCIR
 
 ## Reset
 
-Wipe all data and regenerate config with fresh certificates:
+Wipe all data and regenerate config with fresh certificates and a new DNS name:
 
 ```bash
 docker compose down -v
-docker compose up --build -d
+VR_SERVER_DNS=vr.example.com docker compose up --build -d
 ```
 
 ## License

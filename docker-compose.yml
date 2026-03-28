@@ -6,6 +6,8 @@ services:
         VELOCIRAPTOR_VERSION: "0.76.1"
     container_name: containerraptor
     platform: linux/amd64
+    environment:
+      - VR_SERVER_DNS=${VR_SERVER_DNS:-}
     ports:
       - "8889:8889"
       - "8000:8000"
