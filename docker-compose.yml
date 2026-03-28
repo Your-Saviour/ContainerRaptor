@@ -1,9 +1,8 @@
 services:
   server:
     build:
-      context: .
-      args:
-        VELOCIRAPTOR_VERSION: "0.76.1"
+      context: ..
+      dockerfile: ContainerRaptor/Dockerfile
     container_name: containerraptor
     platform: linux/amd64
     environment:

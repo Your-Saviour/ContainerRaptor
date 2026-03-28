@@ -3,18 +3,21 @@
 # ============================================================
 
 # ----- Stage 1: Builder -----
-# Download the pre-built Velociraptor binary
-FROM dhi.io/debian-base:bookworm-dev AS builder
+# Build Velociraptor from source
+FROM golang:1.25-bookworm AS builder
 
-USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        nodejs npm ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-ARG VELOCIRAPTOR_VERSION=0.76.1
-ARG VELOCIRAPTOR_RELEASE_TAG=v0.76
+COPY TraumaRaptor/ /build/velociraptor
+WORKDIR /build/velociraptor
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
-    && curl -fsSL -o /tmp/velociraptor \
-    "https://github.com/Velocidex/velociraptor/releases/download/${VELOCIRAPTOR_RELEASE_TAG}/velociraptor-v${VELOCIRAPTOR_VERSION}-linux-amd64" \
-    && chmod +x /tmp/velociraptor \
+RUN go run make.go -v assets
+RUN go run make.go -v linux
+
+RUN chmod +x output/velociraptor-*-linux-amd64 \
+    && cp output/velociraptor-*-linux-amd64 /tmp/velociraptor \
     && /tmp/velociraptor version
 
 # ----- Stage 2: Runtime -----
@@ -39,7 +42,7 @@ RUN apt-get update \
 COPY --from=builder /tmp/velociraptor /usr/local/bin/velociraptor
 
 # Copy entrypoint script
-COPY scripts/entrypoint.sh /entrypoint.sh
+COPY ContainerRaptor/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Create directories for volume mounts
